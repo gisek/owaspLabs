@@ -34,25 +34,27 @@ go
 
 create table Products(
 	Id int not null identity(1,1) primary key,
-	Name text,
+	Name varchar(255),
 	Price decimal,
+	IsAvailable bit
 );
 go
 
 insert into Products 
-(Name, Price) 
+(Name, Price, IsAvailable) 
 values 
 (
 	concat('Product_', CONVERT(varchar(255), NEWID())), 
-	CONVERT( DECIMAL(13, 4), 10 + (300-10)*RAND(CHECKSUM(NEWID())))
+	CONVERT( DECIMAL(13, 4), 10 + (300-10)*RAND(CHECKSUM(NEWID()))),
+	CAST(ROUND(RAND(),0) AS BIT)
 );
-go 10
+go 20
 
 create table CreditCards(
 	Id int not null identity(1,1) primary key,
-	Number text,
-	Cvv text,
-	[Owner] text
+	Number varchar(255),
+	Cvv varchar(255),
+	[Owner] varchar(255)
 );
 go
 
@@ -64,4 +66,36 @@ values
 	CONVERT( varchar(255), CAST(100 + (999-100)*RAND(CHECKSUM(NEWID())) as decimal(3,0))),
 	concat('Name_', CONVERT(varchar(255), NEWID()))
 );
-go 10
+go 20
+
+create procedure GetProducts
+	@Id int
+as
+	SELECT * FROM Products WHERE IsAvailable = 1 AND Id = @Id
+go
+
+create procedure GetProductsByName
+	@Name varchar(256)
+as
+	SELECT * FROM Products WHERE IsAvailable = 1 AND Name LIKE '%' + @Name + '%'
+go
+
+create procedure GetProductsUnsafe
+	@Name varchar(256)
+as
+begin
+	declare @rawSql varchar(256)
+	set @rawSql = 'SELECT * FROM Products WHERE IsAvailable = 1 AND Name like ''%' + @Name + '%'''
+	exec(@rawSql)
+end
+go
+
+create procedure GetProductsSecured
+	@Name varchar(256)
+as
+begin
+	declare @rawSql nvarchar(256)
+	set @rawSql = 'SELECT * FROM Products WHERE IsAvailable = 1 AND Name like ''%'' + @NameLike + ''%'''
+	exec sp_executesql @rawSql, N'@NameLike varchar(256)', @NameLike = @Name 
+end
+go

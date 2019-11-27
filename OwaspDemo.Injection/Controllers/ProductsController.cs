@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using OwaspModel;
@@ -30,7 +29,7 @@ namespace OwaspDemo.Injection.Controllers
             {
                 conn.Open();
                 
-                var sql = $"SELECT * FROM Products WHERE Id = {id}";
+                var sql = $"SELECT * FROM Products WHERE IsAvailable = 1 AND Id = {id}";
 
                 var products = new List<string>();
 
@@ -39,15 +38,7 @@ namespace OwaspDemo.Injection.Controllers
                     var reader = cmd.ExecuteReader();
                     while(reader.Read())
                     {
-                        var columnsValues = new List<string>();
-                        var columns = reader.GetColumnSchema();
-                        foreach(var column in columns)
-                        {
-                            var columnValue = reader[column.ColumnName].ToString();
-                            columnsValues.Add(columnValue);
-                        }
-
-                        var productTableRow = String.Join(", ", columnsValues);
+                        var productTableRow = $"Id: {reader["Id"]}, Name:{reader["Name"]}, Price:{reader["Price"]}, IsAvailable:{reader["IsAvailable"]}";
 
                         products.Add(productTableRow);
                     }
