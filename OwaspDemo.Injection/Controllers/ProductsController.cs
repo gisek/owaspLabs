@@ -47,5 +47,34 @@ namespace OwaspDemo.Injection.Controllers
                 return products;
             }
         }
+
+        [HttpGet("products2")]
+        public ActionResult<IEnumerable<string>> GetProducts2()
+        {
+            var name = HttpContext.Request.Query["name"];
+
+            var connectionString = _configuration["ConnectionStrings:RootAccessDbConnectionString"];
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                var sql = $"SELECT * FROM Products WHERE IsAvailable = 1 AND Name like '%{name}%'";
+
+                var products = new List<string>();
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var productTableRow = $"Id: {reader["Id"]}, Name:{reader["Name"]}, Price:{reader["Price"]}, IsAvailable:{reader["IsAvailable"]}";
+
+                        products.Add(productTableRow);
+                    }
+                }
+
+                return products;
+            }
+        }
     }
 }
